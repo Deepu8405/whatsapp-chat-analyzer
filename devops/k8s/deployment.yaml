@@ -1,0 +1,67 @@
+# =============================================================================
+# deployment.yaml — WhatsApp Analyzer Pro
+# Kubernetes Deployment and Service configuration
+# =============================================================================
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: whatsapp-analyzer
+  namespace: default
+  labels:
+    app: whatsapp-analyzer
+    version: "1.0.0"
+spec:
+  # ---- Run 2 replicas for high availability ----
+  replicas: 2
+  selector:
+    matchLabels:
+      app: whatsapp-analyzer
+  template:
+    metadata:
+      labels:
+        app: whatsapp-analyzer
+    spec:
+      containers:
+        - name: whatsapp-analyzer
+          image: deepu84059/whatsapp-analyzer:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8501
+              name: streamlit
+
+          # ---- Resource Limits ----
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+
+          # ---- Health Checks ----
+          livenessProbe:
+            httpGet:
+              path: /_stcore/health
+              port: 8501
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+
+          readinessProbe:
+            httpGet:
+              path: /_stcore/health
+              port: 8501
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 3
+
+          # ---- Environment Variables ----
+          env:
+            - name: PYTHONUNBUFFERED
+              value: "1"
+
+      # ---- Restart Policy ----
+      restartPolicy: Always

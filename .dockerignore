@@ -1,0 +1,42 @@
+New-Item .dockerignore -ItemType File
+```
+
+Open `.dockerignore` and paste:
+```
+# Virtual Environment
+venv/
+.venv/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pdb
+
+# Git
+.git/
+.gitignore
+
+# Environment files
+.env
+*.env
+
+# Streamlit cache
+.streamlit/
+
+# Test files
+tests/
+*.test.py
+
+# Dev files
+*.ipynb
+*.md
+!README.md
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log

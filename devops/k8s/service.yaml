@@ -1,0 +1,49 @@
+# =============================================================================
+# service.yaml — WhatsApp Analyzer Pro
+# Kubernetes Service to expose the deployment
+# =============================================================================
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: whatsapp-analyzer-service
+  namespace: default
+  labels:
+    app: whatsapp-analyzer
+spec:
+  selector:
+    app: whatsapp-analyzer
+
+  # ---- NodePort exposes app on cluster node IP ----
+  type: NodePort
+  ports:
+    - name: streamlit
+      protocol: TCP
+      port: 80
+      targetPort: 8501
+      nodePort: 30501
+
+---
+# =============================================================================
+# HorizontalPodAutoscaler — Auto scale based on CPU usage
+# =============================================================================
+
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: whatsapp-analyzer-hpa
+  namespace: default
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: whatsapp-analyzer
+  minReplicas: 1
+  maxReplicas: 5
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 70

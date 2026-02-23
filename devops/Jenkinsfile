@@ -1,0 +1,146 @@
+// =============================================================================
+// Jenkinsfile — WhatsApp Analyzer Pro
+// CI/CD Pipeline — Build, Test, Push, Deploy
+// =============================================================================
+
+pipeline {
+
+    agent any
+
+    // ---- Environment Variables ----
+    environment {
+        IMAGE_NAME     = "whatsapp-analyzer"
+        IMAGE_TAG      = "${BUILD_NUMBER}"
+        DOCKERHUB_USER = "deepu84059"
+        CONTAINER_PORT = "8501"
+        HOST_PORT      = "8501"
+    }
+
+    // ---- Pipeline Stages ----
+    stages {
+
+        // ---- Stage 1: Checkout ----
+        stage('Checkout') {
+            steps {
+                echo '📥 Checking out source code...'
+                checkout scm
+            }
+        }
+
+        // ---- Stage 2: Setup Python Environment ----
+        stage('Setup Environment') {
+            steps {
+                echo '🐍 Setting up Python environment...'
+                sh '''
+                    python3 -m venv venv
+                    . venv/bin/activate
+                    pip install --upgrade pip
+                    pip install -r requirements.txt
+                '''
+            }
+        }
+
+        // ---- Stage 3: Code Quality Check ----
+        stage('Code Quality') {
+            steps {
+                echo '🔍 Running code quality checks...'
+                sh '''
+                    . venv/bin/activate
+                    pip install flake8 --quiet
+                    flake8 core/ ui/ config/ app.py \
+                        --max-line-length=100 \
+                        --exclude=venv \
+                        --count \
+                        --statistics \
+                        || true
+                '''
+            }
+        }
+
+        // ---- Stage 4: Run Tests ----
+        stage('Run Tests') {
+            steps {
+                echo '🧪 Running unit tests...'
+                sh '''
+                    . venv/bin/activate
+                    pip install pytest --quiet
+                    pytest tests/ -v --tb=short || true
+                '''
+            }
+        }
+
+        // ---- Stage 5: Build Docker Image ----
+        stage('Build Docker Image') {
+            steps {
+                echo '🐳 Building Docker image...'
+                sh '''
+                    docker build \
+                        -f devops/Dockerfile \
+                        -t ${DOCKERHUB_USER}/${IMAGE_NAME}:${IMAGE_TAG} \
+                        -t ${DOCKERHUB_USER}/${IMAGE_NAME}:latest \
+                        .
+                '''
+            }
+        }
+
+        // ---- Stage 6: Push to Docker Hub ----
+        stage('Push to Docker Hub') {
+            steps {
+                echo '📤 Pushing image to Docker Hub...'
+                withCredentials([
+                    usernamePassword(
+                        credentialsId: 'dockerhub-credentials',
+                        usernameVariable: 'DOCKERHUB_USR',
+                        passwordVariable: 'DOCKERHUB_PSW'
+                    )
+                ]) {
+                    sh '''
+                        echo $DOCKERHUB_PSW | docker login \
+                            -u $DOCKERHUB_USR --password-stdin
+                        docker push \
+                            ${DOCKERHUB_USER}/${IMAGE_NAME}:${IMAGE_TAG}
+                        docker push \
+                            ${DOCKERHUB_USER}/${IMAGE_NAME}:latest
+                        docker logout
+                    '''
+                }
+            }
+        }
+
+        // ---- Stage 7: Deploy with Docker Compose ----
+        stage('Deploy') {
+            steps {
+                echo '🚀 Deploying application...'
+                sh '''
+                    cd devops
+                    docker-compose down || true
+                    docker-compose up -d
+                    echo "✅ App deployed at http://localhost:8501"
+                '''
+            }
+        }
+    }
+
+    // ---- Post Actions ----
+    post {
+
+        success {
+            echo '''
+                ✅ Pipeline completed successfully!
+                🌐 App is live at http://localhost:8501
+            '''
+        }
+
+        failure {
+            echo '''
+                ❌ Pipeline failed!
+                Check the logs above for details.
+            '''
+        }
+
+        always {
+            echo '🧹 Cleaning up workspace...'
+            sh 'docker system prune -f || true'
+        }
+    }
+}

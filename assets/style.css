@@ -1,0 +1,227 @@
+/* =============================================================================
+   style.css — Global custom styling for WhatsApp Analyzer Pro
+   ============================================================================= */
+
+/* ---------- Hide Streamlit Default Elements ---------- */
+/* #MainMenu {visibility: hidden;}
+footer {visibility: hidden;}
+header {visibility: hidden;} */
+
+/* ---------- General Body ---------- */
+[data-testid="stAppViewContainer"] {
+    background-color: #0D1117;
+    color: #FFFFFF;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+[data-testid="stSidebar"] {
+    background-color: #0D1117;
+    border-right: 1px solid #21262D;
+}
+
+/* ---------- Scrollbar ---------- */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+::-webkit-scrollbar-track {
+    background: #0D1117;
+}
+::-webkit-scrollbar-thumb {
+    background: #25D366;
+    border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #128C7E;
+}
+
+/* ---------- Streamlit Buttons ---------- */
+[data-testid="stButton"] button {
+    background-color: #25D366 !important;
+    color: #000000 !important;
+    border: none !important;
+    border-radius: 8px !important;
+    font-weight: 700 !important;
+    transition: all 0.3s ease !important;
+}
+
+[data-testid="stButton"] button:hover {
+    background-color: #128C7E !important;
+    color: #FFFFFF !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3) !important;
+}
+
+/* ---------- File Uploader ---------- */
+[data-testid="stFileUploader"] {
+    background-color: #161B22 !important;
+    border: 1px dashed #25D366 !important;
+    border-radius: 10px !important;
+    padding: 10px !important;
+}
+
+/* ---------- Selectbox ---------- */
+[data-testid="stSelectbox"] > div > div {
+    background-color: #161B22 !important;
+    border: 1px solid #21262D !important;
+    border-radius: 8px !important;
+    color: #FFFFFF !important;
+}
+
+/* ---------- Text Input ---------- */
+[data-testid="stTextInput"] input {
+    background-color: #161B22 !important;
+    border: 1px solid #21262D !important;
+    border-radius: 8px !important;
+    color: #FFFFFF !important;
+    padding: 10px 14px !important;
+}
+
+[data-testid="stTextInput"] input:focus {
+    border-color: #25D366 !important;
+    box-shadow: 0 0 0 2px rgba(37, 211, 102, 0.2) !important;
+}
+
+/* ---------- Radio Buttons ---------- */
+[data-testid="stRadio"] label {
+    color: #FFFFFF !important;
+    font-size: 0.9rem !important;
+}
+
+[data-testid="stRadio"] > div {
+    gap: 8px !important;
+}
+
+/* ---------- Success / Warning / Info Boxes ---------- */
+[data-testid="stAlert"] {
+    border-radius: 10px !important;
+    border: none !important;
+}
+
+/* ---------- Divider ---------- */
+hr {
+    border-color: #21262D !important;
+}
+
+/* ---------- Metric Cards ---------- */
+[data-testid="stMetric"] {
+    background-color: #161B22;
+    border: 1px solid #21262D;
+    border-radius: 12px;
+    padding: 16px !important;
+}
+
+[data-testid="stMetricValue"] {
+    color: #25D366 !important;
+    font-size: 1.8rem !important;
+    font-weight: 800 !important;
+}
+
+/* ---------- Hero Section ---------- */
+.hero-container {
+    text-align: center;
+    padding: 60px 20px 40px 20px;
+}
+
+.hero-title {
+    font-size: 3rem;
+    font-weight: 800;
+    color: #25D366;
+    margin-bottom: 10px;
+}
+
+/* ---------- Feature Cards ---------- */
+.feature-grid {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-top: 20px;
+}
+
+.feature-card {
+    background-color: #161B22;
+    border: 1px solid #25D366;
+    border-radius: 12px;
+    padding: 24px 20px;
+    width: 200px;
+    font-size: 0.95rem;
+    color: #FFFFFF;
+    line-height: 1.8;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.feature-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 8px 24px rgba(37, 211, 102, 0.2);
+    border-color: #128C7E;
+}
+
+/* ---------- Sidebar Logo Glow ---------- */
+.sidebar-logo {
+    text-shadow: 0 0 20px rgba(37, 211, 102, 0.5);
+}
+
+/* ---------- Chart Cards ---------- */
+.chart-card {
+    background-color: #161B22;
+    border: 1px solid #21262D;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 16px;
+    transition: border-color 0.3s ease;
+}
+
+.chart-card:hover {
+    border-color: #25D366;
+}
+
+/* ---------- Chat Bubbles ---------- */
+.chat-window {
+    background-color: #161B22;
+    border: 1px solid #21262D;
+    border-radius: 12px;
+    padding: 20px;
+    min-height: 350px;
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+/* ---------- Animations ---------- */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.hero-container,
+.feature-card {
+    animation: fadeIn 0.6s ease forwards;
+}
+
+/* ---------- Floating Top Bar ---------- */
+#floating-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 9999;
+    background-color: #161B22;
+    border-bottom: 1px solid #21262D;
+    padding: 6px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 24px;
+    font-size: 0.82rem;
+    color: #8B949E;
+}
+
+.bar-item {
+    color: #8B949E;
+    font-size: 0.82rem;
+}
+
+/* ---------- Hide default multipage nav ---------- */
+[data-testid="stSidebarNav"] {
+    display: none;
+}
